@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Nanum Pen Script';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/NanumPenScript-Regular.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  background-color: #F5EEE4;
+  color: #2C2825;
+  font-family: "Nanum Pen Script", cursive;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Custom range slider */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #1D5C6B var(--range-progress, 30%),
+    #D4CFC9 var(--range-progress, 30%)
+  );
+  height: 2px;
+  border-radius: 1px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #1D5C6B;
+  border-radius: 50%;
+  height: 28px;
+  width: 28px;
+  margin-top: -13px;
+  box-shadow: 0 2px 8px rgba(29, 92, 107, 0.3);
+}
+
+input[type='range']::-moz-range-track {
+  background: #D4CFC9;
+  height: 2px;
+  border-radius: 1px;
+}
+
+input[type='range']::-moz-range-thumb {
+  background: #1D5C6B;
+  border: none;
+  border-radius: 50%;
+  height: 28px;
+  width: 28px;
+  box-shadow: 0 2px 8px rgba(29, 92, 107, 0.3);
+}
+
+/* Scroll snap quiz container */
+.quiz-scroll {
+  height: 100dvh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.quiz-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile safe area padding */
+.safe-bottom {
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+.safe-top {
+  padding-top: max(48px, env(safe-area-inset-top));
+}
+
+/* Branded focus ring — teal outline for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #1D5C6B;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
