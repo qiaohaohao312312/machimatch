@@ -28,16 +28,18 @@ function pinIcon(rank: number, active: boolean) {
   })
 }
 
-function shopIcon(thumbnail: string) {
+function shopIcon(emoji: string) {
   return L.divIcon({
     className: '',
     html: `<div style="
       width:26px;height:26px;border-radius:50%;
-      background:#fff url('${thumbnail}') center/cover;
+      background:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;line-height:1;
       border:2px solid #B5551E;
       box-shadow:0 2px 6px rgba(0,0,0,0.25);
       cursor:pointer;
-    "></div>`,
+    ">${emoji}</div>`,
     iconSize: [26, 26],
     iconAnchor: [13, 13],
     popupAnchor: [0, -13],
@@ -91,16 +93,10 @@ export default function NeighborhoodMap({ neighborhoods, activeIdx, onSelect }: 
       {neighborhoods.map(n => {
         if (!n.shop) return null
         return (
-          <Marker key={`shop-${n.id}`} position={n.shop.coordinates} icon={shopIcon(n.shop.thumbnail)}>
+          <Marker key={`shop-${n.id}`} position={n.shop.coordinates} icon={shopIcon(n.shop.emoji)}>
             <Popup>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
-                <img
-                  src={n.shop.thumbnail}
-                  alt={n.shop.name}
-                  width={120}
-                  height={120}
-                  style={{ borderRadius: 8, objectFit: 'cover' }}
-                />
+                <div style={{ fontSize: 48, lineHeight: 1, textAlign: 'center' }}>{n.shop.emoji}</div>
                 <strong>{n.shop.name}</strong>
                 <span style={{ fontSize: 12, opacity: 0.7 }}>{n.shop.category}</span>
               </div>

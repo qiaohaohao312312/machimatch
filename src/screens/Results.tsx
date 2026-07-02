@@ -199,13 +199,13 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs }: { neighborhood: 
           className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
           style={{ background: 'rgba(232,221,208,0.6)', border: '1px solid rgba(255,255,255,0.5)' }}
         >
-          <img
-            src={n.shop.thumbnail}
-            alt={n.shop.name}
-            width={56}
-            height={56}
-            className="rounded-xl object-cover shrink-0"
-          />
+          <div
+            className="w-14 h-14 rounded-xl shrink-0 flex items-center justify-center text-3xl"
+            style={{ background: 'rgba(255,255,255,0.6)' }}
+            aria-hidden
+          >
+            {n.shop.emoji}
+          </div>
           <div className="flex flex-col gap-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-handwritten text-[17px] text-ink leading-none">{n.shop.name}</span>

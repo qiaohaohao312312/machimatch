@@ -17,7 +17,7 @@ export interface Shop {
   name: string
   category: string
   blurb: string
-  thumbnail: string
+  emoji: string
   coordinates: [number, number]  // [lat, lng]
 }
 
