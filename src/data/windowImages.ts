@@ -10,18 +10,18 @@ export const WINDOW_OPTIONS: WindowOption[] = [
     id: 0,
     label: 'green view',
     sublabel: 'with trees',
-    url: '/window-green.png',
+    url: `${import.meta.env.BASE_URL}window-green.png`,
   },
   {
     id: 1,
     label: 'busy, lively',
     sublabel: 'city street',
-    url: '/window-street.png',
+    url: `${import.meta.env.BASE_URL}window-street.png`,
   },
   {
     id: 2,
     label: 'city skyline',
     sublabel: 'high above',
-    url: '/window-city.png',
+    url: `${import.meta.env.BASE_URL}window-city.png`,
   },
 ]
