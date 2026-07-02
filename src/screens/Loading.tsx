@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { generateNeighborhoods } from '../api/generate'
+import { NEIGHBORHOODS as FALLBACK_NEIGHBORHOODS } from '../data/neighborhoods'
+import type { Neighborhood, QuizAnswers } from '../types'
 
 const LINES = [
   'Finding your street…',
@@ -9,28 +12,42 @@ const LINES = [
   'Almost there…',
 ]
 
+const MIN_DISPLAY_MS = 1800
+
 interface Props {
-  onDone: () => void
+  city: string
+  answers: QuizAnswers
+  onDone: (neighborhoods: Neighborhood[]) => void
 }
 
-export default function Loading({ onDone }: Props) {
+export default function Loading({ city, answers, onDone }: Props) {
   const [lineIdx, setLineIdx] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLineIdx(prev => {
-        if (prev >= LINES.length - 1) return prev
-        return prev + 1
-      })
+      setLineIdx(prev => (prev >= LINES.length - 1 ? prev : prev + 1))
     }, 900)
 
-    const timer = setTimeout(onDone, 4000)
+    let cancelled = false
+    const startedAt = Date.now()
+
+    generateNeighborhoods(city, answers)
+      .catch(err => {
+        console.warn('[machimatch] AI generation failed, falling back to demo neighborhoods:', err)
+        return FALLBACK_NEIGHBORHOODS
+      })
+      .then(neighborhoods => {
+        if (cancelled) return
+        const elapsed = Date.now() - startedAt
+        const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed)
+        setTimeout(() => { if (!cancelled) onDone(neighborhoods) }, remaining)
+      })
 
     return () => {
+      cancelled = true
       clearInterval(interval)
-      clearTimeout(timer)
     }
-  }, [onDone])
+  }, [city, answers, onDone])
 
   return (
     <div className="min-h-screen bg-parchment flex flex-col items-center justify-center px-6">

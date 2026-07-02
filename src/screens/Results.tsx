@@ -1,7 +1,6 @@
 import { useState, Component } from 'react'
 import type { ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { NEIGHBORHOODS } from '../data/neighborhoods'
 import ShareCard from '../components/ShareCard'
 import { useShareImage } from '../hooks/useShareImage'
 import NeighborhoodMap from '../components/NeighborhoodMap'
@@ -10,6 +9,7 @@ import type { QuizAnswers, Neighborhood, DayMoment } from '../types'
 interface Props {
   city: string
   answers: QuizAnswers
+  neighborhoods: Neighborhood[]
   onRestart: () => void
 }
 
@@ -29,7 +29,7 @@ const cardVariants = {
   exit:   (dir: number) => ({ opacity: 0, x: dir > 0 ? -40 : 40, transition: { duration: 0.18 } }),
 }
 
-export default function Results({ city, answers, onRestart }: Props) {
+export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, onRestart }: Props) {
   const [activeIdx, setActiveIdx] = useState(0)
   const [direction, setDirection] = useState(1)
 

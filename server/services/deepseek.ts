@@ -32,7 +32,17 @@ Return a JSON array of exactly 5 neighborhoods. Each must be a REAL neighborhood
       { "time": "7:00 pm", "text": "An evening moment. End with a feeling of belonging." }
     ],
     "tags": ["tag1", "tag2", "tag3", "tag4"],
-    "mapQuery": "Neighborhood Name, City"
+    "mapQuery": "Neighborhood Name, City",
+    "coordinates": [35.6617, 139.6678],
+    "shops": [
+      {
+        "name": "Real business name",
+        "category": "short category, e.g. coffee shops / bookshops / record shop / bakery / vintage boutique",
+        "blurb": "One specific sentence about what makes this place worth visiting.",
+        "emoji": "single emoji representing the category, e.g. ☕ 📚 💿 🥐 👗",
+        "coordinates": [35.662, 139.668]
+      }
+    ]
   }
 ]
 
@@ -42,6 +52,9 @@ Rules:
 - Match the person's lifestyle: if they want quiet, suggest quieter areas; if lively, suggest vibrant ones
 - "dayOpening" and "dayMoments.text" must be second-person ("you"), present-tense, sensory
 - Tags: 4-5 short descriptive words/phrases
+- "coordinates" is the [latitude, longitude] of the neighborhood's center, as real decimal numbers
+- "shops": exactly 3 REAL, currently operating small local businesses actually located in that neighborhood — no invented names. Prefer categories matching this person's 5-min-walk preferences (${walkPrefs.length ? walkPrefs.join(', ') : 'a natural local mix'}) where a real match exists, otherwise pick genuinely notable local spots (a cafe, a bookshop, a bar, a bakery, a boutique — whatever is actually there and well-regarded)
+- Each shop's "coordinates" should be its real approximate location within the neighborhood
 - Respond with ONLY the JSON array, no markdown, no explanation`
 }
 

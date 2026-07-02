@@ -5,7 +5,7 @@ import Landing from './screens/Landing'
 import Quiz from './screens/Quiz'
 import Loading from './screens/Loading'
 import Results from './screens/Results'
-import type { Screen, QuizAnswers } from './types'
+import type { Screen, QuizAnswers, Neighborhood } from './types'
 
 const PAGE: AnimationProps = {
   initial: { opacity: 0, y: 16 },
@@ -18,6 +18,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('landing')
   const [city, setCity] = useState('')
   const [answers, setAnswers] = useState<QuizAnswers | null>(null)
+  const [neighborhoods, setNeighborhoods] = useState<Neighborhood[] | null>(null)
 
   return (
     <div className="h-full bg-parchment overflow-hidden">
@@ -45,19 +46,28 @@ export default function App() {
           </motion.div>
         )}
 
-        {screen === 'loading' && (
+        {screen === 'loading' && answers && (
           <motion.div key="loading" {...PAGE} className="h-full">
-            <Loading onDone={() => setScreen('results')} />
+            <Loading
+              city={city}
+              answers={answers}
+              onDone={n => {
+                setNeighborhoods(n)
+                setScreen('results')
+              }}
+            />
           </motion.div>
         )}
 
-        {screen === 'results' && answers && (
+        {screen === 'results' && answers && neighborhoods && (
           <motion.div key="results" {...PAGE} className="h-full overflow-y-auto">
             <Results
               city={city}
               answers={answers}
+              neighborhoods={neighborhoods}
               onRestart={() => {
                 setAnswers(null)
+                setNeighborhoods(null)
                 setCity('')
                 setScreen('landing')
               }}

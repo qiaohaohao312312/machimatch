@@ -12,6 +12,14 @@ export interface DayMoment {
   text: string
 }
 
+export interface Shop {
+  name: string
+  category: string
+  blurb: string
+  emoji: string
+  coordinates: [number, number]  // [lat, lng]
+}
+
 export interface Neighborhood {
   id: number
   name: string
@@ -22,6 +30,8 @@ export interface Neighborhood {
   dayMoments: DayMoment[]
   tags: string[]
   mapQuery: string
+  coordinates: [number, number]  // [lat, lng]
+  shops: Shop[]
 }
 
 export interface GenerateRequest {
