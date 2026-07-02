@@ -32,5 +32,5 @@ export interface Neighborhood {
   tags: string[]
   mapQuery: string
   coordinates?: [number, number]  // [lat, lng]
-  shop?: Shop
+  shops?: Shop[]
 }

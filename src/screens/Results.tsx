@@ -13,10 +13,12 @@ interface Props {
   onRestart: () => void
 }
 
+const MATCH_STOPWORDS = new Set(['shop', 'shops', 'store', 'stores'])
+
 function matchesWalkPrefs(category: string, walkPrefs: string[]): boolean {
-  const words = category.toLowerCase().split(/\W+/).filter(Boolean)
+  const words = category.toLowerCase().split(/\W+/).filter(w => w && !MATCH_STOPWORDS.has(w))
   return walkPrefs.some(pref => {
-    const prefWords = pref.toLowerCase().split(/\W+/).filter(Boolean)
+    const prefWords = pref.toLowerCase().split(/\W+/).filter(w => w && !MATCH_STOPWORDS.has(w))
     return prefWords.some(pw => words.some(w => w.includes(pw) || pw.includes(w)))
   })
 }
@@ -193,31 +195,37 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs }: { neighborhood: 
         ))}
       </div>
 
-      {/* Local pick */}
-      {n.shop && (
-        <div
-          className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
-          style={{ background: 'rgba(232,221,208,0.6)', border: '1px solid rgba(255,255,255,0.5)' }}
-        >
-          <div
-            className="w-14 h-14 rounded-xl shrink-0 flex items-center justify-center text-3xl"
-            style={{ background: 'rgba(255,255,255,0.6)' }}
-            aria-hidden
-          >
-            {n.shop.emoji}
-          </div>
-          <div className="flex flex-col gap-0.5 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-handwritten text-[17px] text-ink leading-none">{n.shop.name}</span>
-              {matchesWalkPrefs(n.shop.category, walkPrefs) && (
-                <span className="font-handwritten text-[12px] text-white bg-teal-deep rounded-full px-2 py-0.5 leading-none">
-                  matches your picks
-                </span>
-              )}
+      {/* Local picks */}
+      {n.shops && n.shops.length > 0 && (
+        <div className="flex flex-col gap-2.5">
+          <span className="font-handwritten text-[15px] text-ink/40">Local picks</span>
+          {n.shops.map(shop => (
+            <div
+              key={shop.name}
+              className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+              style={{ background: 'rgba(232,221,208,0.6)', border: '1px solid rgba(255,255,255,0.5)' }}
+            >
+              <div
+                className="w-14 h-14 rounded-xl shrink-0 flex items-center justify-center text-3xl"
+                style={{ background: 'rgba(255,255,255,0.6)' }}
+                aria-hidden
+              >
+                {shop.emoji}
+              </div>
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-handwritten text-[17px] text-ink leading-none">{shop.name}</span>
+                  {matchesWalkPrefs(shop.category, walkPrefs) && (
+                    <span className="font-handwritten text-[12px] text-white bg-teal-deep rounded-full px-2 py-0.5 leading-none">
+                      matches your picks
+                    </span>
+                  )}
+                </div>
+                <span className="font-handwritten text-[13px] text-ink/40">{shop.category}</span>
+                <p className="font-handwritten text-[14px] text-ink/60 leading-snug">{shop.blurb}</p>
+              </div>
             </div>
-            <span className="font-handwritten text-[13px] text-ink/40">{n.shop.category}</span>
-            <p className="font-handwritten text-[14px] text-ink/60 leading-snug">{n.shop.blurb}</p>
-          </div>
+          ))}
         </div>
       )}
 

@@ -90,20 +90,19 @@ export default function NeighborhoodMap({ neighborhoods, activeIdx, onSelect }: 
         )
       })}
 
-      {neighborhoods.map(n => {
-        if (!n.shop) return null
-        return (
-          <Marker key={`shop-${n.id}`} position={n.shop.coordinates} icon={shopIcon(n.shop.emoji)}>
+      {neighborhoods.flatMap(n =>
+        (n.shops ?? []).map((shop, i) => (
+          <Marker key={`shop-${n.id}-${i}`} position={shop.coordinates} icon={shopIcon(shop.emoji)}>
             <Popup>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
-                <div style={{ fontSize: 48, lineHeight: 1, textAlign: 'center' }}>{n.shop.emoji}</div>
-                <strong>{n.shop.name}</strong>
-                <span style={{ fontSize: 12, opacity: 0.7 }}>{n.shop.category}</span>
+                <div style={{ fontSize: 48, lineHeight: 1, textAlign: 'center' }}>{shop.emoji}</div>
+                <strong>{shop.name}</strong>
+                <span style={{ fontSize: 12, opacity: 0.7 }}>{shop.category}</span>
               </div>
             </Popup>
           </Marker>
-        )
-      })}
+        ))
+      )}
     </MapContainer>
   )
 }
