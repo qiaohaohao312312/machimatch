@@ -22,12 +22,19 @@ function buildPrompt({ city, answers }: GenerateRequest): string {
 
   return `You are Machimatch, a neighborhood discovery tool. Based on the following lifestyle preferences, recommend 5 real neighborhoods in ${city} that genuinely fit this person.
 
-PREFERENCES:
-- Preferred window view: ${WINDOW_LABELS[windowView] ?? 'any'}
-- Wants within 5-min walk: ${walkPrefs.length ? walkPrefs.join(', ') : 'flexible'}
-- Neighborhood vibe: ${vibeLabel} (${vibe}/100)
-- City center proximity: ${proximityLabel}
-- Personal notes: "${freeText || 'none'}"
+PREFERENCES (five signals — treat them as roughly equal in importance):
+1. Preferred window view: ${WINDOW_LABELS[windowView] ?? 'any'}
+2. Wants within 5-min walk: ${walkPrefs.length ? walkPrefs.join(', ') : 'flexible'}
+3. Neighborhood vibe: ${vibeLabel} (${vibe}/100)
+4. City center proximity: ${proximityLabel}
+5. Personal notes: "${freeText || 'none'}"
+
+HOW TO WEIGH THESE:
+- Give the five signals roughly equal weight. No single answer should dominate the outcome — a neighborhood that nails one dimension but ignores the rest is a poor match.
+- Score each candidate on how well it balances ALL five signals together; prefer neighborhoods that satisfy more dimensions at once over ones that max out a single dimension.
+- When two signals pull in different directions (e.g. a lively vibe but a green window view), look for neighborhoods that reconcile them rather than surrendering to just one.
+- Personal notes are one signal among five, not an override — weave them in without letting them eclipse the other four.
+- Across the 5 results, show range: cover different balanced trade-offs instead of repeating the same one-note match.
 
 Return a JSON array of exactly 5 neighborhoods. Each must be a REAL neighborhood in ${city}. Format:
 
@@ -62,7 +69,7 @@ Return a JSON array of exactly 5 neighborhoods. Each must be a REAL neighborhood
 Rules:
 - Only real, specific neighborhoods — no invented places
 - Stories must feel specific to the neighborhood, not generic
-- Match the person's lifestyle: if they want quiet, suggest quieter areas; if lively, suggest vibrant ones
+- Apply the balanced weighting described above — every recommendation should reflect all five signals, not just the strongest one
 - "dayOpening" and "dayMoments.text" must be second-person ("you"), present-tense, sensory
 - Tags: 4-5 short descriptive words/phrases
 - "coordinates" is the [latitude, longitude] of the neighborhood's center, as real decimal numbers

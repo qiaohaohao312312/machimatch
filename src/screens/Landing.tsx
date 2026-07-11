@@ -36,14 +36,17 @@ export default function Landing({ onSelect }: Props) {
       <div className="hidden lg:flex flex-1 max-w-[1080px] mx-auto w-full px-16 items-center gap-24">
         {/* Left: hero text */}
         <div className="flex-1 flex flex-col justify-center">
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="font-handwritten text-teal-deep text-2xl mb-8 tracking-wide"
+            className="flex items-center gap-3 mb-8"
           >
-            machimatch
-          </motion.p>
+            <img src="/machimatch-symbol.png" alt="" className="h-10 w-auto" />
+            <span className="font-handwritten text-teal-deep text-2xl tracking-wide">
+              machimatch
+            </span>
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -186,14 +189,17 @@ function MobileContent(props: {
 }) {
   return (
     <>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.6 }}
-        className="font-handwritten text-teal-deep text-xl mb-10 tracking-wide"
+        className="flex items-center gap-2.5 mb-10"
       >
-        machimatch
-      </motion.p>
+        <img src="/machimatch-symbol.png" alt="" className="h-8 w-auto" />
+        <span className="font-handwritten text-teal-deep text-xl tracking-wide">
+          machimatch
+        </span>
+      </motion.div>
       <motion.h1
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

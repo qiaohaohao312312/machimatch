@@ -1,16 +1,33 @@
 import { motion } from 'framer-motion'
+import type { LucideIcon } from 'lucide-react'
+import {
+  TrainFront, Coffee, Utensils, Beer, ShoppingCart, Store,
+  Croissant, Trees, Dumbbell, BookOpen, Laptop, Pill,
+  ShoppingBag, Sparkles,
+} from 'lucide-react'
 
-const MAX_SELECT = 3
+const MAX_SELECT = 4
 
-const OPTIONS = [
-  'coffee shops',
-  'gyms',
-  'big shopping malls',
-  'local restaurants',
-  'parks & nature',
-  'convenience stores',
-  'bookshops',
-  'night markets',
+interface Option {
+  label: string
+  Icon: LucideIcon
+}
+
+const OPTIONS: Option[] = [
+  { label: 'train / metro station', Icon: TrainFront },
+  { label: 'coffee shops',          Icon: Coffee },
+  { label: 'local restaurants',     Icon: Utensils },
+  { label: 'bars & izakaya',        Icon: Beer },
+  { label: 'supermarket',           Icon: ShoppingCart },
+  { label: 'convenience stores',    Icon: Store },
+  { label: 'bakery',                Icon: Croissant },
+  { label: 'parks & nature',        Icon: Trees },
+  { label: 'gyms',                  Icon: Dumbbell },
+  { label: 'bookshops',             Icon: BookOpen },
+  { label: 'co-working space',      Icon: Laptop },
+  { label: 'clinic & pharmacy',     Icon: Pill },
+  { label: 'big shopping malls',    Icon: ShoppingBag },
+  { label: 'night markets',         Icon: Sparkles },
 ]
 
 interface Props {
@@ -45,22 +62,22 @@ export default function WalkCards({ selected, onChange, onComplete }: Props) {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {OPTIONS.map((opt, i) => {
-          const isSelected = selected.includes(opt)
+        {OPTIONS.map(({ label, Icon }, i) => {
+          const isSelected = selected.includes(label)
           const isDisabled = !isSelected && atMax
 
           return (
             <motion.button
-              key={opt}
+              key={label}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04, duration: 0.25 }}
+              transition={{ delay: i * 0.03, duration: 0.25 }}
               whileTap={isDisabled ? {} : { scale: 0.96 }}
-              onClick={() => toggle(opt)}
+              onClick={() => toggle(label)}
               disabled={isDisabled}
               className={`
-                rounded-2xl border-[1.5px] p-4 min-h-[80px] lg:min-h-[100px]
-                flex items-center justify-center text-center
+                rounded-2xl border-[1.5px] p-3 min-h-[92px] lg:min-h-[104px]
+                flex flex-col items-center justify-center gap-2 text-center
                 transition-all duration-200
                 ${isSelected
                   ? 'bg-teal-deep border-teal-deep'
@@ -71,12 +88,18 @@ export default function WalkCards({ selected, onChange, onComplete }: Props) {
               `}
               style={!isSelected && !isDisabled ? { boxShadow: '2px 3px 0px #C4C0BA' } : {}}
             >
+              <Icon
+                size={26}
+                strokeWidth={1.6}
+                className={isSelected ? 'text-white' : 'text-teal-deep'}
+                aria-hidden
+              />
               <span
-                className={`font-handwritten text-[19px] lg:text-[20px] leading-snug ${
+                className={`font-handwritten text-[17px] lg:text-[18px] leading-tight ${
                   isSelected ? 'text-white' : 'text-ink'
                 }`}
               >
-                {opt}
+                {label}
               </span>
             </motion.button>
           )
