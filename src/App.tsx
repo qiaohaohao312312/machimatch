@@ -5,6 +5,7 @@ import Landing from './screens/Landing'
 import Quiz from './screens/Quiz'
 import Loading from './screens/Loading'
 import Results from './screens/Results'
+import Housing from './screens/Housing'
 import type { Screen, QuizAnswers, Neighborhood } from './types'
 
 const PAGE: AnimationProps = {
@@ -19,6 +20,7 @@ export default function App() {
   const [city, setCity] = useState('')
   const [answers, setAnswers] = useState<QuizAnswers | null>(null)
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[] | null>(null)
+  const [housingNeighborhood, setHousingNeighborhood] = useState<Neighborhood | null>(null)
 
   return (
     <div className="h-full bg-parchment overflow-hidden">
@@ -65,12 +67,27 @@ export default function App() {
               city={city}
               answers={answers}
               neighborhoods={neighborhoods}
+              onFindHousing={n => {
+                setHousingNeighborhood(n)
+                setScreen('housing')
+              }}
               onRestart={() => {
                 setAnswers(null)
                 setNeighborhoods(null)
+                setHousingNeighborhood(null)
                 setCity('')
                 setScreen('landing')
               }}
+            />
+          </motion.div>
+        )}
+
+        {screen === 'housing' && housingNeighborhood && (
+          <motion.div key="housing" {...PAGE} className="h-full overflow-y-auto">
+            <Housing
+              city={city}
+              neighborhood={housingNeighborhood}
+              onBack={() => setScreen('results')}
             />
           </motion.div>
         )}

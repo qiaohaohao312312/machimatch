@@ -1,4 +1,4 @@
-export type Screen = 'landing' | 'quiz' | 'loading' | 'results'
+export type Screen = 'landing' | 'quiz' | 'loading' | 'results' | 'housing'
 
 export interface QuizAnswers {
   windowView: number

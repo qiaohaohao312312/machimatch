@@ -10,6 +10,7 @@ interface Props {
   city: string
   answers: QuizAnswers
   neighborhoods: Neighborhood[]
+  onFindHousing: (n: Neighborhood) => void
   onRestart: () => void
 }
 
@@ -29,7 +30,7 @@ const cardVariants = {
   exit:   (dir: number) => ({ opacity: 0, x: dir > 0 ? -40 : 40, transition: { duration: 0.18 } }),
 }
 
-export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, onRestart }: Props) {
+export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, onFindHousing, onRestart }: Props) {
   const [activeIdx, setActiveIdx] = useState(0)
   const [direction, setDirection] = useState(1)
 
@@ -103,6 +104,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
                 neighborhood={NEIGHBORHOODS[activeIdx]}
                 rank={activeIdx + 1}
                 walkPrefs={answers.walkPrefs}
+                onFindHousing={onFindHousing}
               />
             </motion.div>
           </AnimatePresence>
@@ -142,7 +144,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
 
 /* ── Neighborhood card ── */
 
-function NeighborhoodCard({ neighborhood: n, rank, walkPrefs }: { neighborhood: Neighborhood; rank: number; walkPrefs: string[] }) {
+function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: { neighborhood: Neighborhood; rank: number; walkPrefs: string[]; onFindHousing: (n: Neighborhood) => void }) {
   const { cardRef, share, state } = useShareImage(n.name)
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.mapQuery)}`
 
@@ -245,6 +247,15 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs }: { neighborhood: 
           <div className="font-handwritten text-[13px] text-ink/30">{n.mapQuery}</div>
         </div>
       </a>
+
+      {/* Find a place to live — next part */}
+      <button
+        onClick={() => onFindHousing(n)}
+        className="w-full bg-teal-deep text-white font-handwritten text-[19px] rounded-2xl py-3.5 min-h-[52px] hover:bg-teal-soft transition-colors duration-200 shadow-sm flex items-center justify-center gap-2"
+      >
+        Find a place to live here
+        <span aria-hidden>→</span>
+      </button>
 
       {/* Hidden share card */}
       <div ref={cardRef} style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }} aria-hidden>
