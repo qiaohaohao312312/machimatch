@@ -1,11 +1,10 @@
 // Real-housing deep-links.
 //
 // Machimatch does not list or price homes itself (see docs/PRODUCT.md) — this
-// module builds pre-filtered SEARCH links that open live, real listings on the
-// actual housing platforms. Every URL pattern here was verified to resolve.
-// Native search where the platform supports it (Airbnb, Booking); Google
-// site-scoped search for the local rental portals, which reliably lands on real
-// current listings for the neighborhood in any city/language and never 404s.
+// module builds pre-filtered links that open live, real listings on the actual
+// housing platforms. Every URL pattern here was verified to resolve. On SUUMO
+// (Japan's #1) the user's constraints — rent, area, walk-to-station and layout
+// — are encoded directly into the search URL so the results honour them.
 
 export type StayBucket = 'short' | 'mid' | 'long'
 
@@ -14,6 +13,7 @@ export interface HousingPrefs {
   roomType: string // one of ROOM_TYPES id
   minSize: number  // m², 0 = any
   budget: number   // ¥/month max, 0 = any
+  walk: number     // max walk-to-station minutes, 0 = any
 }
 
 export const STAYS: { id: StayBucket; label: string; hint: string }[] = [
@@ -22,12 +22,20 @@ export const STAYS: { id: StayBucket; label: string; hint: string }[] = [
   { id: 'long',  label: '6 months +',    hint: 'local lease · unfurnished' },
 ]
 
-export const ROOM_TYPES: { id: string; label: string; en: string; jp: string }[] = [
-  { id: 'any',    label: 'Any',         en: '',                     jp: '' },
-  { id: 'studio', label: 'Studio',      en: 'studio apartment',     jp: '1R 1K' },
-  { id: '1br',    label: '1 bedroom',   en: '1 bedroom apartment',  jp: '1DK 1LDK' },
-  { id: '2br',    label: '2 bedrooms',  en: '2 bedroom apartment',  jp: '2DK 2LDK' },
-  { id: '3br',    label: '3 bedrooms +',en: '3 bedroom apartment',  jp: '3LDK' },
+// suumoMd: SUUMO madori (layout) codes for the FR301FC005 search.
+export const ROOM_TYPES: { id: string; label: string; en: string; jp: string; suumoMd: string[] }[] = [
+  { id: 'any',    label: 'Any',         en: '',                     jp: '',        suumoMd: [] },
+  { id: 'studio', label: 'Studio',      en: 'studio apartment',     jp: '1R 1K',   suumoMd: ['01', '02'] },
+  { id: '1br',    label: '1 bedroom',   en: '1 bedroom apartment',  jp: '1DK 1LDK',suumoMd: ['03', '04'] },
+  { id: '2br',    label: '2 bedrooms',  en: '2 bedroom apartment',  jp: '2DK 2LDK',suumoMd: ['05', '06', '07'] },
+  { id: '3br',    label: '3 bedrooms +',en: '3 bedroom apartment',  jp: '3LDK',    suumoMd: ['08', '09', '10', '11', '12', '13'] },
+]
+
+export const WALKS: { value: number; label: string }[] = [
+  { value: 0,  label: 'Any' },
+  { value: 5,  label: '≤ 5 min' },
+  { value: 10, label: '≤ 10 min' },
+  { value: 15, label: '≤ 15 min' },
 ]
 
 export const SIZES: { value: number; label: string }[] = [
@@ -90,6 +98,28 @@ function prefSlugOf(city: string): string | null {
 
 const safe = (s: string | undefined) => (s && /^[a-z]+$/.test(s) ? s : null)
 
+// SUUMO municipality codes (JIS) for Tokyo wards + nearby cities. When we know
+// the ward we can build SUUMO's fully-filtered search (rent/area/walk/layout).
+const SUUMO_TOKYO_SC: Record<string, string> = {
+  chiyoda: '13101', chuo: '13102', minato: '13103', shinjuku: '13104',
+  bunkyo: '13105', taito: '13106', sumida: '13107', koto: '13108',
+  shinagawa: '13109', meguro: '13110', ota: '13111', setagaya: '13112',
+  shibuya: '13113', nakano: '13114', suginami: '13115', toshima: '13116',
+  kita: '13117', arakawa: '13118', itabashi: '13119', nerima: '13120',
+  adachi: '13121', katsushika: '13122', edogawa: '13123',
+  musashino: '13203', mitaka: '13204',
+}
+
+// Full SUUMO Tokyo search with the user's constraints baked in.
+function suumoFilteredUrl(sc: string, prefs: HousingPrefs, md: string[]): string {
+  const ct = prefs.budget > 0 ? (prefs.budget / 10000).toFixed(1) : '9999999'
+  const et = prefs.walk > 0 ? String(prefs.walk) : '9999999'
+  const mb = prefs.minSize > 0 ? String(prefs.minSize) : '0'
+  const mdParams = md.map(c => `&md=${c}`).join('')
+  return `https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ar=030&bs=040&ta=13&sc=${sc}` +
+    `&cb=0.0&ct=${ct}&mb=${mb}&mt=9999999&et=${et}&cn=9999999${mdParams}`
+}
+
 // Build the visible set of real-listing links. JP portals link DIRECTLY to the
 // site (native search URLs, verified to resolve), never through a search engine.
 export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
@@ -125,11 +155,21 @@ export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
   if (jp) {
     // ── Japan: direct native links to the real rental portals ──
     if (prefs.stay === 'long') {
-      // SUUMO — Japan's #1. Ward-level page when we know the ward, else prefecture.
-      const suumo = pref
-        ? (ward ? `https://suumo.jp/chintai/${pref}/sc_${ward}/` : `https://suumo.jp/chintai/${pref}/`)
-        : 'https://suumo.jp/chintai/'
-      links.push({ id: 'suumo', name: 'SUUMO', note: "Japan's largest rental site", url: suumo })
+      // SUUMO — Japan's #1. If we know the ward code, bake in ALL the user's
+      // filters (rent / area / walk / layout); otherwise fall back to the
+      // ward-level or prefecture page.
+      const sc = ward ? SUUMO_TOKYO_SC[ward] : undefined
+      const suumo = sc
+        ? suumoFilteredUrl(sc, prefs, room.suumoMd)
+        : pref
+          ? (ward ? `https://suumo.jp/chintai/${pref}/sc_${ward}/` : `https://suumo.jp/chintai/${pref}/`)
+          : 'https://suumo.jp/chintai/'
+      links.push({
+        id: 'suumo',
+        name: 'SUUMO',
+        note: sc ? 'your filters applied · rent, size, walk, layout' : "Japan's largest rental site",
+        url: suumo,
+      })
 
       // AtHome — #2. Prefecture list with the neighborhood as keyword.
       const athome = pref

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import type { Neighborhood } from '../types'
 import {
-  STAYS, ROOM_TYPES, SIZES, BUDGETS,
+  STAYS, ROOM_TYPES, SIZES, BUDGETS, WALKS,
   buildHousingLinks, type HousingPrefs, type StayBucket,
 } from '../data/housingProviders'
 
@@ -19,6 +19,7 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
     roomType: 'any',
     minSize: 0,
     budget: 0,
+    walk: 0,
   })
 
   const links = useMemo(
@@ -112,11 +113,22 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
           </div>
         </Section>
 
+        {/* Walk to station */}
+        <Section label="Walk to station">
+          <div className="flex flex-wrap gap-2.5">
+            {WALKS.map(w => (
+              <Chip key={w.value} selected={prefs.walk === w.value} onClick={() => set('walk', w.value)} compact>
+                {w.label}
+              </Chip>
+            ))}
+          </div>
+        </Section>
+
         {/* Listings */}
         <div className="mt-9">
           <h2 className="font-display text-[19px] text-ink mb-1">Real listings</h2>
           <p className="font-handwritten text-[15px] text-ink/40 mb-4">
-            These open the real housing sites for {neighborhood.name} — fine-tune room type & budget once you're there. Machimatch doesn't list or price homes itself.
+            These open the real housing sites for {neighborhood.name}. SUUMO opens with your filters applied; on the others, fine-tune once you're there. Machimatch doesn't list or price homes itself.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
