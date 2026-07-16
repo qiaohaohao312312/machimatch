@@ -49,7 +49,8 @@ export const BUDGETS: { value: number; label: string }[] = [
 export interface LinkCtx {
   city: string
   neighborhood: string
-  jpName?: string // Japanese district name if available, for JP-site queries
+  nameJa?: string   // Japanese neighborhood name, for JP-site freeword search
+  wardSlug?: string // romaji ward for SUUMO ward pages, e.g. "setagaya"
   prefs: HousingPrefs
 }
 
@@ -66,39 +67,49 @@ function roomOf(prefs: HousingPrefs) {
 
 export function isJapan(city: string, extra = ''): boolean {
   const s = `${city} ${extra}`.toLowerCase()
-  if (/tokyo|osaka|kyoto|yokohama|nagoya|fukuoka|sapporo|kobe|nara|japan/.test(s)) return true
-  // any kana / kanji present
-  return /[぀-ヿ一-龯]/.test(`${city}${extra}`)
+  if (/tokyo|osaka|kyoto|yokohama|kawasaki|nagoya|fukuoka|sapporo|kobe|nara|sendai|hiroshima|japan/.test(s)) return true
+  return /[぀-ヿ一-龯]/.test(`${city}${extra}`) // any kana / kanji
 }
 
-function hasCJK(s: string): boolean {
-  return /[぀-ヿ一-龯]/.test(s)
+// City → prefecture slug used in SUUMO / AtHome / HOME'S rental URLs.
+const PREF_SLUG: Record<string, string> = {
+  tokyo: 'tokyo', osaka: 'osaka', kyoto: 'kyoto',
+  yokohama: 'kanagawa', kawasaki: 'kanagawa', kanagawa: 'kanagawa',
+  nagoya: 'aichi', aichi: 'aichi', fukuoka: 'fukuoka',
+  sapporo: 'hokkaido', hokkaido: 'hokkaido', kobe: 'hyogo', hyogo: 'hyogo',
+  nara: 'nara', sendai: 'miyagi', miyagi: 'miyagi', hiroshima: 'hiroshima',
 }
 
-function g(query: string): string {
-  return `https://www.google.com/search?q=${encodeURIComponent(query.replace(/\s+/g, ' ').trim())}`
+function prefSlugOf(city: string): string | null {
+  const key = city.toLowerCase()
+  for (const k of Object.keys(PREF_SLUG)) {
+    if (key.includes(k)) return PREF_SLUG[k]
+  }
+  return null
 }
 
-// Build the visible set of real-listing links for the given context.
+const safe = (s: string | undefined) => (s && /^[a-z]+$/.test(s) ? s : null)
+
+// Build the visible set of real-listing links. JP portals link DIRECTLY to the
+// site (native search URLs, verified to resolve), never through a search engine.
 export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
-  const { city, neighborhood, jpName, prefs } = ctx
+  const { city, neighborhood, nameJa, wardSlug, prefs } = ctx
   const loc = `${neighborhood}, ${city}`
+  const jp = isJapan(city, `${neighborhood} ${nameJa ?? ''}`)
+  const pref = prefSlugOf(city)             // e.g. 'tokyo' | null
+  const ward = safe(wardSlug?.toLowerCase()) // e.g. 'setagaya' | null
   const room = roomOf(prefs)
-  const jp = isJapan(city, `${neighborhood} ${jpName ?? ''}`)
-  // Use the specific neighborhood as the keyword (more precise than the ward);
-  // append the district only when it's an actual Japanese name, not romaji.
-  const jpKw = neighborhood + (jpName && hasCJK(jpName) ? ` ${jpName}` : '')
-  const sizeEn = prefs.minSize ? ` ${prefs.minSize}m2` : ''
-  const budgetJp = prefs.budget ? ` ${Math.round(prefs.budget / 10000)}万円以下` : ''
+  const kwBase = nameJa || neighborhood      // freeword keyword for JP sites
+  const kw = room.jp ? `${kwBase} ${room.jp.split(' ')[0]}` : kwBase
 
   const links: HousingLink[] = []
 
   // ── Global, native platforms ──
-  if (prefs.stay === 'short' || prefs.stay === 'mid') {
+  if (prefs.stay === 'short' || prefs.stay === 'mid' || prefs.stay === 'long') {
     links.push({
       id: 'airbnb',
       name: 'Airbnb',
-      note: prefs.stay === 'mid' ? 'furnished · set monthly dates' : 'furnished · short stay',
+      note: prefs.stay === 'short' ? 'furnished · short stay' : 'furnished · set monthly dates',
       url: `https://www.airbnb.com/s/${encodeURIComponent(loc)}/homes?adults=1`,
     })
   }
@@ -110,51 +121,34 @@ export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
       url: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(loc)}`,
     })
   }
-  if (prefs.stay === 'mid') {
-    links.push({
-      id: 'furnished',
-      name: 'Furnished monthly',
-      note: 'HousingAnywhere · Spotahome · Nestpick',
-      url: g(`${loc} furnished monthly apartment for rent ${room.en}${sizeEn}`),
-    })
-  }
-  if (prefs.stay === 'long') {
-    links.push({
-      id: 'localrent',
-      name: 'Local rental listings',
-      note: 'the main rental portal for this city',
-      url: g(`${loc} apartments for rent ${room.en}${sizeEn}`),
-    })
-  }
 
-  // ── Japan-specific portals (Google site-scoped → real listings) ──
   if (jp) {
+    // ── Japan: direct native links to the real rental portals ──
     if (prefs.stay === 'long') {
-      links.push({
-        id: 'suumo',
-        name: 'SUUMO',
-        note: "Japan's largest rental site",
-        url: g(`${jpKw} 賃貸 ${room.jp}${budgetJp} site:suumo.jp`),
-      })
-      links.push({
-        id: 'homes',
-        name: "LIFULL HOME'S",
-        note: 'major Japanese rental portal',
-        url: g(`${jpKw} 賃貸 ${room.jp}${budgetJp} site:homes.co.jp`),
-      })
+      // SUUMO — Japan's #1. Ward-level page when we know the ward, else prefecture.
+      const suumo = pref
+        ? (ward ? `https://suumo.jp/chintai/${pref}/sc_${ward}/` : `https://suumo.jp/chintai/${pref}/`)
+        : 'https://suumo.jp/chintai/'
+      links.push({ id: 'suumo', name: 'SUUMO', note: "Japan's largest rental site", url: suumo })
+
+      // AtHome — #2. Prefecture list with the neighborhood as keyword.
+      const athome = pref
+        ? `https://www.athome.co.jp/chintai/${pref}/list/?keyword=${encodeURIComponent(kw)}`
+        : 'https://www.athome.co.jp/chintai/'
+      links.push({ id: 'athome', name: 'AtHome', note: 'major nationwide rental site', url: athome })
+
+      // LIFULL HOME'S — freeword search actually filters by the Japanese name.
+      const homes = pref
+        ? `https://www.homes.co.jp/chintai/${pref}/list/?fw=${encodeURIComponent(kw)}`
+        : 'https://www.homes.co.jp/chintai/'
+      links.push({ id: 'homes', name: "LIFULL HOME'S", note: 'filtered by neighborhood', url: homes })
     }
-    if (prefs.stay === 'mid' || prefs.stay === 'long') {
-      links.push({
-        id: 'gaijinpot',
-        name: 'GaijinPot Housing',
-        note: 'English · foreigner-friendly',
-        url: g(`${neighborhood} Tokyo apartment rent ${room.en} site:apartments.gaijinpot.com`),
-      })
+    if (prefs.stay === 'mid') {
       links.push({
         id: 'oakhouse',
         name: 'Oakhouse',
         note: 'English · monthly · share houses',
-        url: g(`${neighborhood} site:oakhouse.jp`),
+        url: 'https://www.oakhouse.jp/eng',
       })
     }
   }

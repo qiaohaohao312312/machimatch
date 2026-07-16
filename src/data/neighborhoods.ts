@@ -5,6 +5,8 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 1,
     name: 'Shimokitazawa',
     district: '下北沢',
+    nameJa: '下北沢',
+    wardSlug: 'setagaya',
     city: 'Tokyo',
     intro:
       'Indie cafés, second-hand bookshops, and a lively music scene tucked into narrow lanes. This is where Tokyo\'s creatives come to breathe—unhurried, unglamorous, and entirely itself.',
@@ -59,6 +61,8 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 2,
     name: 'Yanaka',
     district: '谷中',
+    nameJa: '谷中',
+    wardSlug: 'taito',
     city: 'Tokyo',
     intro:
       'One of Tokyo\'s last intact shitamachi neighborhoods. Low-rise, unhurried, and genuinely friendly—cats sleep on every corner and neighbors still say good morning to strangers.',
@@ -113,6 +117,8 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 3,
     name: 'Nakameguro',
     district: '中目黒',
+    nameJa: '中目黒',
+    wardSlug: 'meguro',
     city: 'Tokyo',
     intro:
       'A canal lined with boutiques and restaurants that feel designed for exactly the life you want to live. Stylish without trying too hard—the best kind.',
@@ -167,6 +173,8 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 4,
     name: 'Sangenjaya',
     district: '三軒茶屋',
+    nameJa: '三軒茶屋',
+    wardSlug: 'setagaya',
     city: 'Tokyo',
     intro:
       'Slightly rougher around the edges, deeply local, and wonderful for it. Great izakayas, independent shops, real neighborhood life—without the Insta crowd.',
@@ -221,6 +229,8 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 5,
     name: 'Harajuku',
     district: '原宿 (裏)',
+    nameJa: '原宿',
+    wardSlug: 'shibuya',
     city: 'Tokyo',
     intro:
       'Past the crowds, into the quiet streets behind Omotesando—a neighborhood that somehow feels both fashionable and intimate, as if it\'s been waiting for exactly you.',

@@ -54,6 +54,8 @@ Return a JSON array of exactly 5 neighborhoods. Each must be a REAL neighborhood
     "tags": ["tag1", "tag2", "tag3", "tag4"],
     "mapQuery": "Neighborhood Name, City",
     "coordinates": [35.6617, 139.6678],
+    "nameJa": "",
+    "wardSlug": "",
     "shops": [
       {
         "name": "Real business name",
@@ -73,6 +75,7 @@ Rules:
 - "dayOpening" and "dayMoments.text" must be second-person ("you"), present-tense, sensory
 - Tags: 4-5 short descriptive words/phrases
 - "coordinates" is the [latitude, longitude] of the neighborhood's center, as real decimal numbers
+- "nameJa": the neighborhood's Japanese name if this city is in Japan (e.g. "下北沢"), otherwise "". "wardSlug": the romaji ward/city used by Japanese rental sites, lowercase letters only, no suffix (e.g. Shimokitazawa → "setagaya", Nakameguro → "meguro"), otherwise "". Leave BOTH as "" for any city outside Japan.
 - "shops": exactly 3 REAL, currently operating small local businesses actually located in that neighborhood — no invented names. Prefer categories matching this person's 5-min-walk preferences (${walkPrefs.length ? walkPrefs.join(', ') : 'a natural local mix'}) where a real match exists, otherwise pick genuinely notable local spots (a cafe, a bookshop, a bar, a bakery, a boutique — whatever is actually there and well-regarded)
 - Each shop's "coordinates" should be its real approximate location within the neighborhood
 - Respond with ONLY the JSON array, no markdown, no explanation`

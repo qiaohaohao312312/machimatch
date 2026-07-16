@@ -25,7 +25,8 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
     () => buildHousingLinks({
       city,
       neighborhood: neighborhood.name,
-      jpName: neighborhood.district,
+      nameJa: neighborhood.nameJa,
+      wardSlug: neighborhood.wardSlug,
       prefs,
     }),
     [city, neighborhood, prefs],
@@ -115,7 +116,7 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
         <div className="mt-9">
           <h2 className="font-display text-[19px] text-ink mb-1">Real listings</h2>
           <p className="font-handwritten text-[15px] text-ink/40 mb-4">
-            These open live searches on real housing sites — Machimatch doesn't list or price homes itself.
+            These open the real housing sites for {neighborhood.name} — fine-tune room type & budget once you're there. Machimatch doesn't list or price homes itself.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

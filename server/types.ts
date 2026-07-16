@@ -32,6 +32,8 @@ export interface Neighborhood {
   mapQuery: string
   coordinates: [number, number]  // [lat, lng]
   shops: Shop[]
+  nameJa?: string    // Japanese name, e.g. "下北沢"
+  wardSlug?: string  // romaji ward for JP rental sites, e.g. "setagaya"
 }
 
 export interface GenerateRequest {
