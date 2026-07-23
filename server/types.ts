@@ -39,6 +39,7 @@ export interface Neighborhood {
 export interface GenerateRequest {
   city: string
   answers: QuizAnswers
+  lang?: string
 }
 
 export interface GenerateResponse {

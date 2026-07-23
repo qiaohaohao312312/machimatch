@@ -139,7 +139,7 @@ export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
     links.push({
       id: 'airbnb',
       name: 'Airbnb',
-      note: prefs.stay === 'short' ? 'furnished · short stay' : 'furnished · set monthly dates',
+      note: prefs.stay === 'short' ? 'prov.airbnb.short' : 'prov.airbnb.monthly',
       url: `https://www.airbnb.com/s/${encodeURIComponent(loc)}/homes?adults=1`,
     })
   }
@@ -147,7 +147,7 @@ export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
     links.push({
       id: 'booking',
       name: 'Booking.com',
-      note: 'short stays · nightly',
+      note: 'prov.booking',
       url: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(loc)}`,
     })
   }
@@ -167,7 +167,7 @@ export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
       links.push({
         id: 'suumo',
         name: 'SUUMO',
-        note: sc ? 'your filters applied · rent, size, walk, layout' : "Japan's largest rental site",
+        note: sc ? 'prov.suumo.filtered' : 'prov.suumo.big',
         url: suumo,
       })
 
@@ -175,19 +175,19 @@ export function buildHousingLinks(ctx: LinkCtx): HousingLink[] {
       const athome = pref
         ? `https://www.athome.co.jp/chintai/${pref}/list/?keyword=${encodeURIComponent(kw)}`
         : 'https://www.athome.co.jp/chintai/'
-      links.push({ id: 'athome', name: 'AtHome', note: 'major nationwide rental site', url: athome })
+      links.push({ id: 'athome', name: 'AtHome', note: 'prov.athome', url: athome })
 
       // LIFULL HOME'S — freeword search actually filters by the Japanese name.
       const homes = pref
         ? `https://www.homes.co.jp/chintai/${pref}/list/?fw=${encodeURIComponent(kw)}`
         : 'https://www.homes.co.jp/chintai/'
-      links.push({ id: 'homes', name: "LIFULL HOME'S", note: 'filtered by neighborhood', url: homes })
+      links.push({ id: 'homes', name: "LIFULL HOME'S", note: 'prov.homes', url: homes })
     }
     if (prefs.stay === 'mid') {
       links.push({
         id: 'oakhouse',
         name: 'Oakhouse',
-        note: 'English · monthly · share houses',
+        note: 'prov.oakhouse',
         url: 'https://www.oakhouse.jp/eng',
       })
     }

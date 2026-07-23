@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
+import { useT } from '../i18n'
 
 const LEVELS = [
-  { value: 5, label: "must be within 10 min", r: 52 },
-  { value: 4, label: "within 20 min",          r: 104 },
-  { value: 3, label: "within 30 min",          r: 158 },
-  { value: 2, label: "up to 45 min is fine",   r: 212 },
-  { value: 1, label: "don't mind",             r: 268 },
+  { value: 5, key: 'prio.5', r: 52 },
+  { value: 4, key: 'prio.4', r: 104 },
+  { value: 3, key: 'prio.3', r: 158 },
+  { value: 2, key: 'prio.2', r: 212 },
+  { value: 1, key: 'prio.1', r: 268 },
 ]
 
 const H = 340
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function PriorityScale({ value, onChange }: Props) {
+  const t = useT()
   const handleClick = (v: number) => {
     onChange(v)
   }
@@ -82,7 +84,7 @@ export default function PriorityScale({ value, onChange }: Props) {
                     : 'text-ink/30 text-[19px] lg:text-[21px] group-hover:text-ink/55'
                 }`}
               >
-                {level.label}
+                {t(level.key)}
               </span>
 
               {/* Underline reveals on selection */}

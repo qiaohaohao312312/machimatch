@@ -5,6 +5,7 @@ import WalkCards from '../components/WalkCards'
 import VibeSlider from '../components/VibeSlider'
 import PriorityScale from '../components/PriorityScale'
 import FreeText from '../components/FreeText'
+import { useT } from '../i18n'
 import type { QuizAnswers } from '../types'
 
 interface Props {
@@ -21,6 +22,7 @@ const INITIAL: QuizAnswers = {
 }
 
 export default function Quiz({ city, onGenerate }: Props) {
+  const t = useT()
   const [answers, setAnswers] = useState<QuizAnswers>(INITIAL)
   const sectionRefs = useRef<(HTMLElement | null)[]>([])
 
@@ -41,9 +43,7 @@ export default function Quiz({ city, onGenerate }: Props) {
       {/* Q1 — Window view */}
       <section ref={setRef(0)} className="quiz-section px-6 safe-top safe-bottom">
         <div className="flex-1 flex flex-col max-w-[430px] lg:max-w-[600px] mx-auto w-full pt-10 pb-4">
-          <QuizTitle>
-            What Window Would<br />You Like to<br />Wake Up To?
-          </QuizTitle>
+          <QuizTitle>{t('quiz.q1')}</QuizTitle>
           <div className="flex-1 flex flex-col justify-center py-4">
             <WindowSwipe
               selected={answers.windowView}
@@ -57,9 +57,7 @@ export default function Quiz({ city, onGenerate }: Props) {
       {/* Q2 — Walk prefs */}
       <section ref={setRef(1)} className="quiz-section px-6 safe-top safe-bottom">
         <div className="flex-1 flex flex-col max-w-[430px] lg:max-w-[600px] mx-auto w-full pt-10 pb-4 overflow-y-auto">
-          <QuizTitle>
-            What Would You<br />Like Within a Five-<br />Minute Walk?
-          </QuizTitle>
+          <QuizTitle>{t('quiz.q2')}</QuizTitle>
           <div className="flex-1 py-4">
             <WalkCards
               selected={answers.walkPrefs}
@@ -74,9 +72,7 @@ export default function Quiz({ city, onGenerate }: Props) {
       {/* Q3 — Vibe slider */}
       <section ref={setRef(2)} className="quiz-section px-6 safe-top safe-bottom">
         <div className="flex-1 flex flex-col max-w-[430px] lg:max-w-[600px] mx-auto w-full pt-10 pb-4">
-          <QuizTitle>
-            Do You Prefer a<br />Quiet Neighborhood<br />or a Lively One?
-          </QuizTitle>
+          <QuizTitle>{t('quiz.q3')}</QuizTitle>
           <div className="flex-1 flex flex-col justify-center py-8">
             <VibeSlider value={answers.vibe} onChange={v => set('vibe', v)} />
           </div>
@@ -87,9 +83,7 @@ export default function Quiz({ city, onGenerate }: Props) {
       {/* Q4 — City center priority */}
       <section ref={setRef(3)} className="quiz-section px-6 safe-top safe-bottom">
         <div className="flex-1 flex flex-col max-w-[430px] lg:max-w-[600px] mx-auto w-full pt-10 pb-4">
-          <QuizTitle>
-            How Important Is It<br />for You to Get to<br />the City Center Quickly?
-          </QuizTitle>
+          <QuizTitle>{t('quiz.q4')}</QuizTitle>
           <div className="flex-1 flex flex-col justify-center py-2">
             <PriorityScale
               value={answers.cityPriority}
@@ -103,9 +97,7 @@ export default function Quiz({ city, onGenerate }: Props) {
       {/* Q5 — Free text + Generate */}
       <section ref={setRef(4)} className="quiz-section px-6 safe-top safe-bottom">
         <div className="flex-1 flex flex-col max-w-[430px] lg:max-w-[600px] mx-auto w-full pt-10 pb-4">
-          <QuizTitle>
-            Other things you<br />would like us to<br />know…
-          </QuizTitle>
+          <QuizTitle>{t('quiz.q5')}</QuizTitle>
           <div className="flex-1 flex flex-col justify-center py-4">
             <FreeText value={answers.freeText} onChange={v => set('freeText', v)} />
           </div>
@@ -119,10 +111,10 @@ export default function Quiz({ city, onGenerate }: Props) {
               shadow-md shrink-0
             "
           >
-            Generate
+            {t('quiz.generate')}
           </motion.button>
           <p className="mt-3 font-handwritten text-[16px] text-ink/40 text-center">
-            for {city}
+            {t('quiz.forCity', { city })}
           </p>
         </div>
       </section>
@@ -139,6 +131,7 @@ function QuizTitle({ children }: { children: React.ReactNode }) {
 }
 
 function DownButton({ onClick }: { onClick: () => void }) {
+  const t = useT()
   return (
     <div className="flex justify-center py-3 shrink-0">
       <motion.button
@@ -151,7 +144,7 @@ function DownButton({ onClick }: { onClick: () => void }) {
           hover:bg-teal-deep hover:text-white hover:border-teal-deep
           transition-colors duration-200
         "
-        aria-label="Continue to next question"
+        aria-label={t('quiz.next')}
       >
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
           <path

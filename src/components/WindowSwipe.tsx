@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { WINDOW_OPTIONS } from '../data/windowImages'
+import { useT } from '../i18n'
 
 interface Props {
   selected: number
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function WindowSwipe({ selected, onChange }: Props) {
+  const t = useT()
   const [imgError, setImgError] = useState<Record<number, boolean>>({})
 
   return (
@@ -37,13 +39,13 @@ export default function WindowSwipe({ selected, onChange }: Props) {
                 {imgError[opt.id] ? (
                   <div className="w-full h-full bg-sand flex items-center justify-center">
                     <span className="font-handwritten text-ink/40 text-sm text-center px-2">
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </span>
                   </div>
                 ) : (
                   <img
                     src={opt.url}
-                    alt={`${opt.label} ${opt.sublabel}`}
+                    alt={`${t(opt.labelKey)} ${t(opt.sublabelKey)}`}
                     onError={() => setImgError(prev => ({ ...prev, [opt.id]: true }))}
                     className={`w-full h-full object-cover transition-all duration-200 ${
                       isSelected ? '' : 'opacity-85 group-hover:opacity-100'
@@ -71,9 +73,9 @@ export default function WindowSwipe({ selected, onChange }: Props) {
                   isSelected ? 'text-ink' : 'text-ink/40'
                 }`}
               >
-                {opt.label}
+                {t(opt.labelKey)}
                 <br />
-                {opt.sublabel}
+                {t(opt.sublabelKey)}
               </span>
             </motion.button>
           )

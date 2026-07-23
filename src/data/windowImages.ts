@@ -1,27 +1,27 @@
 export interface WindowOption {
   id: number
-  label: string
-  sublabel: string
+  labelKey: string
+  sublabelKey: string
   url: string
 }
 
 export const WINDOW_OPTIONS: WindowOption[] = [
   {
     id: 0,
-    label: 'green view',
-    sublabel: 'with trees',
+    labelKey: 'win.green',
+    sublabelKey: 'win.green.sub',
     url: `${import.meta.env.BASE_URL}window-green.png`,
   },
   {
     id: 1,
-    label: 'busy, lively',
-    sublabel: 'city street',
+    labelKey: 'win.street',
+    sublabelKey: 'win.street.sub',
     url: `${import.meta.env.BASE_URL}window-street.png`,
   },
   {
     id: 2,
-    label: 'city skyline',
-    sublabel: 'high above',
+    labelKey: 'win.city',
+    sublabelKey: 'win.city.sub',
     url: `${import.meta.env.BASE_URL}window-city.png`,
   },
 ]

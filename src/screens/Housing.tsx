@@ -6,6 +6,7 @@ import {
   STAYS, ROOM_TYPES, SIZES, BUDGETS, WALKS,
   buildHousingLinks, type HousingPrefs, type StayBucket,
 } from '../data/housingProviders'
+import { useT } from '../i18n'
 
 interface Props {
   city: string
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function Housing({ city, neighborhood, onBack }: Props) {
+  const t = useT()
   const [prefs, setPrefs] = useState<HousingPrefs>({
     stay: 'mid',
     roomType: 'any',
@@ -46,19 +48,19 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
           className="flex items-center gap-1.5 font-handwritten text-[16px] text-ink/50 hover:text-ink/80 transition-colors mb-6"
         >
           <ArrowLeft size={16} strokeWidth={1.8} />
-          back to neighborhoods
+          {t('h.back')}
         </button>
 
         {/* Title */}
         <h1 className="font-display text-[26px] lg:text-[30px] leading-tight text-ink">
-          Find a place in {neighborhood.name}
+          {t('h.title', { name: neighborhood.name })}
         </h1>
         <p className="font-handwritten text-[16px] text-ink/45 mt-1">
-          Tell us how you'd live here, and we'll open real listings for you.
+          {t('h.sub')}
         </p>
 
         {/* Stay length */}
-        <Section label="How long are you staying?">
+        <Section label={t('h.stay')}>
           <div className="grid grid-cols-3 gap-2.5">
             {STAYS.map(s => (
               <Chip
@@ -66,9 +68,9 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
                 selected={prefs.stay === s.id}
                 onClick={() => set('stay', s.id as StayBucket)}
               >
-                <span className="block leading-tight">{s.label}</span>
+                <span className="block leading-tight">{t(`stay.${s.id}`)}</span>
                 <span className={`block text-[12px] mt-0.5 ${prefs.stay === s.id ? 'text-white/70' : 'text-ink/35'}`}>
-                  {s.hint}
+                  {t(`stay.${s.id}.hint`)}
                 </span>
               </Chip>
             ))}
@@ -76,11 +78,11 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
         </Section>
 
         {/* Room type */}
-        <Section label="Room type">
+        <Section label={t('h.roomType')}>
           <div className="flex flex-wrap gap-2.5">
             {ROOM_TYPES.map(r => (
               <Chip key={r.id} selected={prefs.roomType === r.id} onClick={() => set('roomType', r.id)} compact>
-                {r.label}
+                {t(`room.${r.id}`)}
                 {r.jp && (
                   <span className={`ml-1.5 text-[13px] ${prefs.roomType === r.id ? 'text-white/60' : 'text-ink/30'}`}>
                     {r.jp}
@@ -92,33 +94,33 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
         </Section>
 
         {/* Size */}
-        <Section label="Minimum size">
+        <Section label={t('h.minSize')}>
           <div className="flex flex-wrap gap-2.5">
             {SIZES.map(s => (
               <Chip key={s.value} selected={prefs.minSize === s.value} onClick={() => set('minSize', s.value)} compact>
-                {s.label}
+                {s.value === 0 ? t('opt.any') : t('size.m2', { n: s.value })}
               </Chip>
             ))}
           </div>
         </Section>
 
         {/* Budget */}
-        <Section label="Monthly budget">
+        <Section label={t('h.budget')}>
           <div className="flex flex-wrap gap-2.5">
             {BUDGETS.map(b => (
               <Chip key={b.value} selected={prefs.budget === b.value} onClick={() => set('budget', b.value)} compact>
-                {b.label}
+                {b.value === 0 ? t('opt.any') : b.label}
               </Chip>
             ))}
           </div>
         </Section>
 
         {/* Walk to station */}
-        <Section label="Walk to station">
+        <Section label={t('h.walk')}>
           <div className="flex flex-wrap gap-2.5">
             {WALKS.map(w => (
               <Chip key={w.value} selected={prefs.walk === w.value} onClick={() => set('walk', w.value)} compact>
-                {w.label}
+                {w.value === 0 ? t('opt.any') : t('walk.min', { n: w.value })}
               </Chip>
             ))}
           </div>
@@ -126,9 +128,9 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
 
         {/* Listings */}
         <div className="mt-9">
-          <h2 className="font-display text-[19px] text-ink mb-1">Real listings</h2>
+          <h2 className="font-display text-[19px] text-ink mb-1">{t('h.listings')}</h2>
           <p className="font-handwritten text-[15px] text-ink/40 mb-4">
-            These open the real housing sites for {neighborhood.name}. SUUMO opens with your filters applied; on the others, fine-tune once you're there. Machimatch doesn't list or price homes itself.
+            {t('h.note', { name: neighborhood.name })}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -147,7 +149,7 @@ export default function Housing({ city, neighborhood, onBack }: Props) {
               >
                 <div className="flex flex-col min-w-0 flex-1">
                   <span className="font-handwritten text-[18px] text-ink leading-none">{link.name}</span>
-                  <span className="font-handwritten text-[13px] text-ink/40 mt-1">{link.note}</span>
+                  <span className="font-handwritten text-[13px] text-ink/40 mt-1">{t(link.note)}</span>
                 </div>
                 <ExternalLink size={17} strokeWidth={1.8} className="text-teal-deep/60 group-hover:text-teal-deep shrink-0" />
               </motion.a>

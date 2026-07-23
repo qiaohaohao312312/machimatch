@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useT } from '../i18n'
 
 const FLOATING_EXAMPLES = [
   { text: 'I have a cat...',                  x: '6%',  y: '4%',  delay: 0 },
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function FreeText({ value, onChange }: Props) {
+  const t = useT()
   const [focused, setFocused] = useState(false)
 
   return (
@@ -30,7 +32,7 @@ export default function FreeText({ value, onChange }: Props) {
         onChange={e => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        placeholder="I have a cat..."
+        placeholder={t('free.placeholder')}
         rows={3}
         className={`
           w-full border-[1.5px] rounded-3xl px-5 py-4

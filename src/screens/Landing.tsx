@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useT } from '../i18n'
 
 const CITY_PILLS = ['Tokyo', 'NYC', 'Paris', 'Shanghai', 'London']
 
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function Landing({ onSelect }: Props) {
+  const t = useT()
   const [input, setInput] = useState('')
 
   const handleSubmit = (city: string) => {
@@ -53,7 +55,7 @@ export default function Landing({ onSelect }: Props) {
             transition={{ delay: 0.2, duration: 0.5, ease: 'easeOut' }}
             className="font-display text-[52px] leading-[1.15] text-ink mb-6"
           >
-            Where Will Your<br />Next Home Be?
+            {t('landing.headline')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -61,8 +63,7 @@ export default function Landing({ onSelect }: Props) {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="font-body text-[18px] text-ink leading-relaxed max-w-[380px]"
           >
-            The first step of finding a home is the street.
-            Before the apartment, there is a feeling.
+            {t('landing.sub')}
           </motion.p>
         </div>
 
@@ -84,7 +85,7 @@ export default function Landing({ onSelect }: Props) {
         transition={{ delay: 1.2, duration: 0.8 }}
         className="lg:hidden text-center font-ui text-xs text-ink pb-8 px-6"
       >
-        The first step of finding a home is the street.
+        {t('landing.mobileHint')}
       </motion.p>
     </div>
   )
@@ -93,6 +94,7 @@ export default function Landing({ onSelect }: Props) {
 /* ─── Shared pill + input logic ─── */
 
 function CityPills({ onSubmit }: { onSubmit: (city: string) => void }) {
+  const t = useT()
   return (
     <div className="flex flex-wrap gap-2.5 justify-center">
       {CITY_PILLS.map((city, i) => (
@@ -126,7 +128,7 @@ function CityPills({ onSubmit }: { onSubmit: (city: string) => void }) {
           min-h-[44px] flex items-center
         "
       >
-        Anywhere ✦
+        {t('landing.anywhere')}
       </motion.button>
     </div>
   )
@@ -143,6 +145,7 @@ function SearchInput({
   onKeyDown: (e: React.KeyboardEvent) => void
   onSubmit: (v: string) => void
 }) {
+  const t = useT()
   return (
     <div className="relative">
       <input
@@ -150,7 +153,7 @@ function SearchInput({
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder="Type a city..."
+        placeholder={t('landing.placeholder')}
         className="
           w-full border-[1.5px] border-teal-deep rounded-full
           px-5 py-4 bg-transparent text-ink font-ui text-base
@@ -173,7 +176,7 @@ function SearchInput({
               hover:bg-teal-soft transition-colors
             "
           >
-            Go →
+            {t('landing.go')}
           </motion.button>
         )}
       </AnimatePresence>
@@ -187,6 +190,7 @@ function MobileContent(props: {
   onKeyDown: (e: React.KeyboardEvent) => void
   onSubmit: (v: string) => void
 }) {
+  const t = useT()
   return (
     <>
       <motion.div
@@ -206,7 +210,7 @@ function MobileContent(props: {
         transition={{ delay: 0.2, duration: 0.5, ease: 'easeOut' }}
         className="font-display text-[38px] leading-[1.2] text-ink mb-10"
       >
-        Where Will Your<br />Next Home Be?
+        {t('landing.headline')}
       </motion.h1>
       <motion.div
         initial={{ opacity: 0, y: 12 }}

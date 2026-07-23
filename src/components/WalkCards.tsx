@@ -5,29 +5,31 @@ import {
   Croissant, Trees, Dumbbell, BookOpen, Laptop, Pill,
   ShoppingBag, Sparkles,
 } from 'lucide-react'
+import { useT } from '../i18n'
 
 const MAX_SELECT = 4
 
 interface Option {
-  label: string
+  value: string  // canonical English value stored in answers + sent to the AI
+  key: string    // i18n key for the display label
   Icon: LucideIcon
 }
 
 const OPTIONS: Option[] = [
-  { label: 'train / metro station', Icon: TrainFront },
-  { label: 'coffee shops',          Icon: Coffee },
-  { label: 'local restaurants',     Icon: Utensils },
-  { label: 'bars & izakaya',        Icon: Beer },
-  { label: 'supermarket',           Icon: ShoppingCart },
-  { label: 'convenience stores',    Icon: Store },
-  { label: 'bakery',                Icon: Croissant },
-  { label: 'parks & nature',        Icon: Trees },
-  { label: 'gyms',                  Icon: Dumbbell },
-  { label: 'bookshops',             Icon: BookOpen },
-  { label: 'co-working space',      Icon: Laptop },
-  { label: 'clinic & pharmacy',     Icon: Pill },
-  { label: 'big shopping malls',    Icon: ShoppingBag },
-  { label: 'night markets',         Icon: Sparkles },
+  { value: 'train / metro station', key: 'walk.station',     Icon: TrainFront },
+  { value: 'coffee shops',          key: 'walk.coffee',      Icon: Coffee },
+  { value: 'local restaurants',     key: 'walk.restaurants', Icon: Utensils },
+  { value: 'bars & izakaya',        key: 'walk.bars',        Icon: Beer },
+  { value: 'supermarket',           key: 'walk.supermarket', Icon: ShoppingCart },
+  { value: 'convenience stores',    key: 'walk.conbini',     Icon: Store },
+  { value: 'bakery',                key: 'walk.bakery',      Icon: Croissant },
+  { value: 'parks & nature',        key: 'walk.parks',       Icon: Trees },
+  { value: 'gyms',                  key: 'walk.gyms',        Icon: Dumbbell },
+  { value: 'bookshops',             key: 'walk.bookshops',   Icon: BookOpen },
+  { value: 'co-working space',      key: 'walk.coworking',   Icon: Laptop },
+  { value: 'clinic & pharmacy',     key: 'walk.clinic',      Icon: Pill },
+  { value: 'big shopping malls',    key: 'walk.malls',       Icon: ShoppingBag },
+  { value: 'night markets',         key: 'walk.nightmarket', Icon: Sparkles },
 ]
 
 interface Props {
@@ -37,6 +39,7 @@ interface Props {
 }
 
 export default function WalkCards({ selected, onChange, onComplete }: Props) {
+  const t = useT()
   const atMax = selected.length >= MAX_SELECT
 
   const toggle = (opt: string) => {
@@ -62,18 +65,18 @@ export default function WalkCards({ selected, onChange, onComplete }: Props) {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {OPTIONS.map(({ label, Icon }, i) => {
-          const isSelected = selected.includes(label)
+        {OPTIONS.map(({ value, key, Icon }, i) => {
+          const isSelected = selected.includes(value)
           const isDisabled = !isSelected && atMax
 
           return (
             <motion.button
-              key={label}
+              key={value}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03, duration: 0.25 }}
               whileTap={isDisabled ? {} : { scale: 0.96 }}
-              onClick={() => toggle(label)}
+              onClick={() => toggle(value)}
               disabled={isDisabled}
               className={`
                 rounded-2xl border-[1.5px] p-3 min-h-[92px] lg:min-h-[104px]
@@ -99,7 +102,7 @@ export default function WalkCards({ selected, onChange, onComplete }: Props) {
                   isSelected ? 'text-white' : 'text-ink'
                 }`}
               >
-                {label}
+                {t(key)}
               </span>
             </motion.button>
           )

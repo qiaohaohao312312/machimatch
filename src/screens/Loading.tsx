@@ -2,15 +2,10 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { generateNeighborhoods } from '../api/generate'
 import { NEIGHBORHOODS as FALLBACK_NEIGHBORHOODS } from '../data/neighborhoods'
+import { useI18n } from '../i18n'
 import type { Neighborhood, QuizAnswers } from '../types'
 
-const LINES = [
-  'Finding your street…',
-  'Listening to the neighborhood…',
-  'Reading the morning light…',
-  'Mapping the feeling…',
-  'Almost there…',
-]
+const LINE_KEYS = ['loading.l1', 'loading.l2', 'loading.l3', 'loading.l4', 'loading.l5']
 
 const MIN_DISPLAY_MS = 1800
 
@@ -21,17 +16,18 @@ interface Props {
 }
 
 export default function Loading({ city, answers, onDone }: Props) {
+  const { t, lang } = useI18n()
   const [lineIdx, setLineIdx] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLineIdx(prev => (prev >= LINES.length - 1 ? prev : prev + 1))
+      setLineIdx(prev => (prev >= LINE_KEYS.length - 1 ? prev : prev + 1))
     }, 900)
 
     let cancelled = false
     const startedAt = Date.now()
 
-    generateNeighborhoods(city, answers)
+    generateNeighborhoods(city, answers, lang)
       .catch(err => {
         console.warn('[machimatch] AI generation failed, falling back to demo neighborhoods:', err)
         return FALLBACK_NEIGHBORHOODS
@@ -47,7 +43,7 @@ export default function Loading({ city, answers, onDone }: Props) {
       cancelled = true
       clearInterval(interval)
     }
-  }, [city, answers, onDone])
+  }, [city, answers, lang, onDone])
 
   return (
     <div className="min-h-screen bg-parchment flex flex-col items-center justify-center px-6">
@@ -78,7 +74,7 @@ export default function Loading({ city, answers, onDone }: Props) {
             transition={{ duration: 0.4, ease: 'easeOut' }}
             className="font-display text-[22px] text-ink leading-snug"
           >
-            {LINES[lineIdx]}
+            {t(LINE_KEYS[lineIdx])}
           </motion.p>
         </AnimatePresence>
       </div>

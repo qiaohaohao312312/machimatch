@@ -1,13 +1,17 @@
 import type { GenerateRequest, Neighborhood } from '../types'
 
 const WINDOW_LABELS = ['green view with trees', 'busy lively city street', 'city skyline high above']
+const LANG_NAMES: Record<string, string> = { en: 'English', ja: 'Japanese', zh: 'Simplified Chinese' }
 
-function buildPrompt({ city, answers }: GenerateRequest): string {
+function buildPrompt({ city, answers, lang }: GenerateRequest): string {
   const { windowView, walkPrefs, vibe, cityPriority, freeText } = answers
   const vibeLabel = vibe < 30 ? 'quiet and calm' : vibe < 70 ? 'balanced energy' : 'lively and buzzing'
   const proximityLabel = ['not important', 'nice to have', 'somewhat important', 'pretty important', 'must be within 15 min'][cityPriority - 1]
+  const language = LANG_NAMES[lang ?? 'en'] ?? 'English'
 
   return `You are Machimatch, a neighborhood discovery tool. Based on the following lifestyle preferences, recommend 5 real neighborhoods in ${city} that genuinely fit this person.
+
+WRITE ALL HUMAN-READABLE TEXT IN ${language}. This applies to intro, dayOpening, every dayMoments.text, tags, and each shop's blurb — write them naturally in ${language} (not translated-sounding). Keep proper nouns (neighborhood names, shop names, station names) in their local form. Keep the JSON keys, "category" values, "nameJa", "wardSlug", "mapQuery" and all numbers exactly as specified below regardless of language.
 
 PREFERENCES (five signals — treat them as roughly equal in importance):
 1. Preferred window view: ${WINDOW_LABELS[windowView] ?? 'any'}

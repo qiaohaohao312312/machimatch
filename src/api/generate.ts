@@ -2,12 +2,13 @@ import type { QuizAnswers, Neighborhood } from '../types'
 
 export async function generateNeighborhoods(
   city: string,
-  answers: QuizAnswers
+  answers: QuizAnswers,
+  lang: string = 'en'
 ): Promise<Neighborhood[]> {
   const res = await fetch('/api/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ city, answers }),
+    body: JSON.stringify({ city, answers, lang }),
   })
 
   if (!res.ok) {

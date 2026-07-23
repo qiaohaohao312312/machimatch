@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useT } from '../i18n'
 
 interface Props {
   value: number
@@ -6,6 +7,7 @@ interface Props {
 }
 
 export default function VibeSlider({ value, onChange }: Props) {
+  const t = useT()
   const trackRef = useRef<HTMLDivElement>(null)
 
   const progress = `${value}%`
@@ -32,14 +34,14 @@ export default function VibeSlider({ value, onChange }: Props) {
             value < 30 ? 'text-teal-deep opacity-100' : 'text-ink opacity-50'
           }`}
         >
-          Quiet
+          {t('vibe.quiet')}
         </span>
         <span
           className={`font-handwritten text-[20px] lg:text-[24px] transition-opacity duration-200 ${
             value > 70 ? 'text-teal-deep opacity-100' : 'text-ink opacity-50'
           }`}
         >
-          Lively
+          {t('vibe.lively')}
         </span>
       </div>
 
@@ -47,14 +49,14 @@ export default function VibeSlider({ value, onChange }: Props) {
       <div className="mt-6 text-center min-h-[28px]">
         <span className="font-handwritten text-[16px] text-ink/60">
           {value < 20
-            ? 'Very quiet and peaceful'
+            ? t('vibe.f1')
             : value < 40
-            ? 'Mostly quiet'
+            ? t('vibe.f2')
             : value < 60
-            ? 'A comfortable middle'
+            ? t('vibe.f3')
             : value < 80
-            ? 'Quite lively'
-            : 'Buzzing with energy'}
+            ? t('vibe.f4')
+            : t('vibe.f5')}
         </span>
       </div>
     </div>

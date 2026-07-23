@@ -6,6 +6,7 @@ import Quiz from './screens/Quiz'
 import Loading from './screens/Loading'
 import Results from './screens/Results'
 import Housing from './screens/Housing'
+import { LanguageSwitcher } from './i18n'
 import type { Screen, QuizAnswers, Neighborhood } from './types'
 
 const PAGE: AnimationProps = {
@@ -24,6 +25,7 @@ export default function App() {
 
   return (
     <div className="h-full bg-parchment overflow-hidden">
+      <LanguageSwitcher />
       <AnimatePresence mode="wait">
         {screen === 'landing' && (
           <motion.div key="landing" {...PAGE} className="h-full">

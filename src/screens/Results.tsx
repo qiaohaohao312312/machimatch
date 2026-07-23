@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ShareCard from '../components/ShareCard'
 import { useShareImage } from '../hooks/useShareImage'
 import NeighborhoodMap from '../components/NeighborhoodMap'
+import { useT } from '../i18n'
 import type { QuizAnswers, Neighborhood, DayMoment } from '../types'
 
 interface Props {
@@ -31,6 +32,7 @@ const cardVariants = {
 }
 
 export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, onFindHousing, onRestart }: Props) {
+  const t = useT()
   const [activeIdx, setActiveIdx] = useState(0)
   const [direction, setDirection] = useState(1)
 
@@ -48,7 +50,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
         role="region"
         aria-label="Neighborhood map"
       >
-        <MapErrorBoundary>
+        <MapErrorBoundary label={t('res.mapError')}>
           <NeighborhoodMap
             neighborhoods={NEIGHBORHOODS}
             activeIdx={activeIdx}
@@ -66,7 +68,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
         {/* Pin legend hint — only on first load */}
         <div className="absolute bottom-3 right-3 z-[1000] pointer-events-none">
           <span className="bg-parchment/90 rounded-full px-3 py-1 font-handwritten text-[13px] text-ink/50">
-            tap a pin to explore
+            {t('res.tapPin')}
           </span>
         </div>
       </div>
@@ -80,7 +82,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
         {/* Header row */}
         <div className="px-5 pt-4 pb-3 shrink-0 border-b border-ink/8 flex items-baseline justify-between gap-3">
           <h1 className="font-display text-[18px] md:text-[20px] lg:text-[24px] leading-tight text-ink">
-            5 neighborhoods for you
+            {t('res.title')}
           </h1>
           {/* Active neighborhood quick label */}
           <span className="font-handwritten text-[15px] text-teal-deep shrink-0">
@@ -134,7 +136,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
             onClick={onRestart}
             className="font-handwritten text-[15px] text-ink/40 hover:text-ink/70 transition-colors"
           >
-            Start over
+            {t('res.startOver')}
           </button>
         </div>
       </div>
@@ -145,6 +147,7 @@ export default function Results({ city, answers, neighborhoods: NEIGHBORHOODS, o
 /* ── Neighborhood card ── */
 
 function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: { neighborhood: Neighborhood; rank: number; walkPrefs: string[]; onFindHousing: (n: Neighborhood) => void }) {
+  const t = useT()
   const { cardRef, share, state } = useShareImage(n.name)
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.mapQuery)}`
 
@@ -158,7 +161,7 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: {
       {/* Name row */}
       <div className="flex items-center gap-2.5">
         <span className="font-handwritten text-[14px] text-ink/40 border border-ink/20 rounded-full px-2 py-0.5 shrink-0">
-          no.{rank}
+          {t('res.rank', { rank })}
         </span>
         <span className="font-handwritten text-[24px] lg:text-[28px] text-ink leading-none">
           {n.name}
@@ -200,7 +203,7 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: {
       {/* Local picks */}
       {n.shops && n.shops.length > 0 && (
         <div className="flex flex-col gap-2.5">
-          <span className="font-handwritten text-[15px] text-ink/40">Local picks</span>
+          <span className="font-handwritten text-[15px] text-ink/40">{t('res.localPicks')}</span>
           {n.shops.map(shop => (
             <div
               key={shop.name}
@@ -219,7 +222,7 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: {
                   <span className="font-handwritten text-[17px] text-ink leading-none">{shop.name}</span>
                   {matchesWalkPrefs(shop.category, walkPrefs) && (
                     <span className="font-handwritten text-[12px] text-white bg-teal-deep rounded-full px-2 py-0.5 leading-none">
-                      matches your picks
+                      {t('res.matches')}
                     </span>
                   )}
                 </div>
@@ -242,7 +245,7 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: {
         <MapPinIcon />
         <div>
           <div className="font-handwritten text-[16px] text-ink/60 leading-none mb-0.5">
-            Open in Google Maps
+            {t('res.openMaps')}
           </div>
           <div className="font-handwritten text-[13px] text-ink/30">{n.mapQuery}</div>
         </div>
@@ -253,7 +256,7 @@ function NeighborhoodCard({ neighborhood: n, rank, walkPrefs, onFindHousing }: {
         onClick={() => onFindHousing(n)}
         className="w-full bg-teal-deep text-white font-handwritten text-[19px] rounded-2xl py-3.5 min-h-[52px] hover:bg-teal-soft transition-colors duration-200 shadow-sm flex items-center justify-center gap-2"
       >
-        Find a place to live here
+        {t('res.findHousing')}
         <span aria-hidden>→</span>
       </button>
 
@@ -291,8 +294,8 @@ function MapPinIcon() {
   )
 }
 
-class MapErrorBoundary extends Component<{ children: ReactNode }, { error: string | null }> {
-  constructor(props: { children: ReactNode }) {
+class MapErrorBoundary extends Component<{ children: ReactNode; label?: string }, { error: string | null }> {
+  constructor(props: { children: ReactNode; label?: string }) {
     super(props)
     this.state = { error: null }
   }
@@ -301,7 +304,7 @@ class MapErrorBoundary extends Component<{ children: ReactNode }, { error: strin
     if (this.state.error) {
       return (
         <div className="w-full h-full bg-sand/60 flex flex-col items-center justify-center gap-2 p-4">
-          <span className="font-handwritten text-[15px] text-ink/50 text-center">map error</span>
+          <span className="font-handwritten text-[15px] text-ink/50 text-center">{this.props.label ?? 'map error'}</span>
           <span className="font-ui text-[11px] text-ink/30 text-center break-all max-w-xs">{this.state.error}</span>
         </div>
       )
