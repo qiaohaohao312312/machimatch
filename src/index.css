@@ -37,6 +37,22 @@ body {
   height: 100%;
 }
 
+/* Japanese & Chinese render in the Yozai (悠哉字体) handwriting webfont —
+   the web-ready form of the Y.OzFont handwriting style, covering kana + CJK.
+   The <html lang> attribute is kept in sync by the i18n LanguageProvider. */
+:root[lang='ja'] body,
+:root[lang='zh'] body,
+:root[lang='ja'] .font-display,
+:root[lang='ja'] .font-handwritten,
+:root[lang='ja'] .font-body,
+:root[lang='ja'] .font-ui,
+:root[lang='zh'] .font-display,
+:root[lang='zh'] .font-handwritten,
+:root[lang='zh'] .font-body,
+:root[lang='zh'] .font-ui {
+  font-family: 'Yozai', 'Nanum Pen Script', cursive;
+}
+
 /* Custom range slider */
 input[type='range'] {
   -webkit-appearance: none;

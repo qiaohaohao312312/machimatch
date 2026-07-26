@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { STRINGS, type Lang } from './strings'
 
@@ -33,10 +33,15 @@ const LangContext = createContext<Ctx | null>(null)
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(initialLang)
 
+  // Keep <html lang> in sync so the language-based font overrides in
+  // index.css apply — including on first load from a saved preference.
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   const setLang = useCallback((l: Lang) => {
     setLangState(l)
     try { localStorage.setItem(STORAGE_KEY, l) } catch { /* ignore */ }
-    if (typeof document !== 'undefined') document.documentElement.lang = l
   }, [])
 
   const t = useCallback<TFn>((key, vars) => {
