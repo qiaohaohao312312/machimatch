@@ -100,7 +100,11 @@ async function generateNeighborhoods(req: GenerateRequest): Promise<unknown[]> {
       Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
+      // Disable the model's reasoning pass — it otherwise eats the token
+      // budget and truncates the JSON. We only need the structured output.
+      thinking: { type: 'disabled' },
+      max_tokens: 8000,
       messages: [{ role: 'user', content: buildPrompt(req) }],
     }),
   })
